@@ -7,7 +7,7 @@ Works both as standalone plugin and as filemanager for image/media/link windows.
 
 Based on Image Manager by Antonov Andrey http://dustweb.ru/projects/tinymce_images/
 
-elustroFm now only works with PHP.
+elustroFm now only works with PHP and uses [WideImage](http://wideimage.sourceforge.net/) for image manipulation.
 
 ##Installation
 1. Copy 'elustrofm' directory to `{path_to_TinyMCE}`/plugins
