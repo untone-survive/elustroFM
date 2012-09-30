@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>elustroFM</title>
+
+    <link rel="stylesheet" type="text/css" href="css/images.css?ver=20123009" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.plupload.queue.css" />
+</head>
+<body>
+<div id="upload">
+    <div id="shadowBack"></div>
+    <div id="uploadWindow">
+        <div id="uploadWindow1">
+            <div id="uploadClose"></div>
+            <div id="uploadAreaNormal">
+                <form method="post" id="filesForm">
+                    <div id="uploader"></div>
+                </form>
+            </div>
+            <div id="uploadTarget"></div>
+        </div>
+    </div>
+</div>
+<div id="header" class="header">
+    <div id="insertImage" data-translate="Insert file||title" title="">
+        <img src="img/icon.gif" width="20" height="20" alt="" /></div>
+
+    <div id="addrBar">
+        <div class="addrBar1">
+            <div class="addrBar2" id="addr">
+            </div>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div id="toolBar">
+        <div class="toolBar1">
+            <div class="toolBar2">
+                <div class="toolItem toolItem-createFolder" id="menuCreateFolder" data-translate="Create folder">
+                    {createFolder}
+                </div>
+                <div class="toolItem toolItem-delFolder" id="menuDelFolder" data-translate="Delete folder">
+                    {deleteFolder}
+                </div>
+                <div class="toolItem toolItem-cancelFolder" id="menuCancelFolder" data-translate="Cancel creation">
+                    {cancelCreateFolder}
+                </div>
+                <div class="toolItem toolItem-saveFolder" id="menuSaveFolder" data-translate="Save folder">
+                    {saveFolder}
+                </div>
+                <div class="toolItem toolItem-uploadFiles" id="menuUploadFiles" data-translate="Upload files">
+                    {uploadFiles}
+                </div>
+                <div class="toolItem toolItem-delFiles" id="menuDelFiles" data-translate="Delete files">
+                    {deleteFiles}
+                </div>
+
+                <div id="loader">
+                    <img src="img/ajax-loader.gif" width="16" height="16" data-translate="Loading||alt" alt="" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table id="mainField" cellpadding="0" cellspacing="0">
+    <tr>
+        <td valign="top" id="mainTree">
+            <div id="mainTreeHolder">
+                <div id="tree">
+
+                </div>
+            </div>
+        </td>
+        <td valign="top" id="mainFiles">
+            <div id="paginator" class="pagination"></div>
+            <div id="files">
+                <div style="clear:both;"></div>
+            </div>
+        </td>
+    </tr>
+</table>
+<div class="footer" id="foot">
+    <table cellpadding="0" cellspacing="0" id="footTable">
+        <tr>
+            <td width="35%">
+                <table id="footTableName">
+                    <tr>
+                        <td id="fileName"></td>
+                        <td>
+                            <img src="img/pencil_small.png" width="16" height="16" data-translate="Edit file name||alt" alt="" id="fileNameEdit" /><img src="img/tick_small.png" width="16" height="16" data-translate="Save file name||alt" alt="" id="fileNameSave" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="20%" class="footLabel" id="footDateLabel" data-translate="Upload date:">{uploadDate}</td>
+            <td width="20%" id="footDate"></td>
+            <td class="footLabel" id="footDimLabel" data-translate="Image dimensions:">{imageDimensions}</td>
+            <td id="footDim"></td>
+        </tr>
+        <tr>
+            <td id="footExt" data-translate="Total files: ">{totalFiles}</td>
+            <td class="footLabel" id="footLinkLabel" data-translate="Link to file:">{linkToFile}</td>
+            <td id="footLink">
+                <img src="img/chain.png" width="16" height="16" data-translate="Link||alt" alt="" style="vertical-align:sub" /> <a href="#" target="_blank"></a>
+            </td>
+            <td class="footLabel" data-translate="File size:">Размер:</td>
+            <td id="footSize">0</td>
+        </tr>
+    </table>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery-colors.js"></script>
+<script type="text/javascript">
+    function getURLParam(strParamName) {
+        var strReturn, strHref = window.location.href;
+        if (strHref.indexOf("?") > -1) {
+            var strQueryString = strHref.substr(strHref.indexOf("?")).toLowerCase(), aQueryString = strQueryString.split("&");
+            for (var iParam = 0; iParam < aQueryString.length; iParam++) {
+                if (aQueryString[iParam].indexOf(strParamName.toLowerCase() + "=") > -1) {
+                    var aParam = aQueryString[iParam].split("=");
+                    return decodeURI(aParam[1]);
+                    break;
+                }
+            }
+        }
+    }
+
+    var integration = getURLParam('integration');// if loaded as plugin for TinyMCE or TinyMCE file manager, add tiny_mce_popup.js
+    (integration === 'plugin' || integration === 'fm')
+    && document.write('<script type="text/javascript" src="../../tiny_mce_popup.js"><\/script>');
+</script>
+<script type="text/javascript" src="js/images.js?ver=20122709"></script>
+<!-- Plupload -->
+<script type="text/javascript" src="js/plupload.full.js"></script>
+<script type="text/javascript" src="js/jquery.plupload.queue.js"></script>
+<!-- /Plupload -->
+</body>
+</html>
