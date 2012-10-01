@@ -71,7 +71,7 @@ class TinyImageManager {
         $return['upload']['images']['allowed'] = $this->ALLOWED_IMAGES;
         $return['upload']['images']['width'] = MAX_WIDTH;
         $return['upload']['images']['height'] = MAX_HEIGHT;
-        $return['upload']['files']['allowed'] = array_merge($this->ALLOWED_IMAGES,$this->ALLOWED_FILES);
+        $return['upload']['files']['allowed'] = array_merge($this->ALLOWED_IMAGES, $this->ALLOWED_FILES);
         die(json_encode($return));
         break;
 
@@ -390,9 +390,10 @@ class TinyImageManager {
 
     $files = $this->getFileList($dir, $type);
     if ($files) {
-    $this->total_pages = ceil(count($files) / FILES_PER_PAGE);
-    $startFile = ($page - 1) * FILES_PER_PAGE;
-    return array_slice($files, $startFile, FILES_PER_PAGE);
+      $this->total_pages = ceil(count($files) / FILES_PER_PAGE);
+      $startFile = ($page - 1) * FILES_PER_PAGE;
+
+      return array_slice($files, $startFile, FILES_PER_PAGE);
     } else {
       return false;
     }
@@ -504,8 +505,12 @@ class TinyImageManager {
     if ($type == 'images' && in_array(strtolower($file_info['extension']), $this->ALLOWED_IMAGES)) {
       $maxWidth = MAX_WIDTH ? MAX_WIDTH : '100%';
       $maxHeight = MAX_HEIGHT ? MAX_HEIGHT : '100%';
+      try {
       WideImage::load($fileFullPath)->resizeDown($maxWidth, $maxHeight)->saveToFile($fileFullPath);
-      $fileImageInfo = getimagesize($fileFullPath);
+      $fileImageInfo = getimagesize($fileFullPath);}
+      catch (WideImage_InvalidImageSourceException $e) {
+        $e->getMessage();
+      }
     }
     $files[$file] = array( 'filename' => $file,
                            'name' => $realname ? $realname : basename(mb_strtolower($file_info['basename']), '.' . $file_info['extension']),
@@ -715,9 +720,9 @@ class TinyImageManager {
     if (!is_array($dir)) {
       $dir = $this->CallDir($inputDir, $type, 1);
     }
-//    if (!is_array($dir)) {
-//      $dir = $this->CallDir('', $type, 1);
-//    }
+    //    if (!is_array($dir)) {
+    //      $dir = $this->CallDir('', $type, 1);
+    //    }
 
     if (!is_array($dir)) {
       return '';
@@ -736,7 +741,7 @@ class TinyImageManager {
         $middle_thumb_attr = '';
       }
 
-      $img_params = 'width="100" height="100"';
+      $img_params = '';
       $div_params = '';
 
       if ($type == 'files' || in_array($v['ext'], $this->ALLOWED_FILES)) {
@@ -776,48 +781,55 @@ class TinyImageManager {
 
 
   function GetThumb($dir, $md5, $filename, $mode, $width = 100, $height = 100) {
-    $path = realpath(DIR_ROOT . '/' . $dir);
+    $path = realpath(DIR_ROOT . DS . $dir);
     $ext = strtolower(end(explode('.', $filename))); // filename extention
-    $thumbFilename = '/.thumbs/' . $md5 . '_' . $width . '_' . $height . '_' . $mode . '.' . $ext;
+    $thumbFilename = DS . '.thumbs' . DS . $md5 . '_' . $width . '_' . $height . '_' . $mode . '.' . $ext;
 
     // if thumb already exists
     if (is_file($path . $thumbFilename)) {
       return $this->http_root . $dir . $thumbFilename;
     } else {
       // if not an image or we are in 'files' folder
-      if (!in_array($ext, $this->ALLOWED_IMAGES) || strpos($dir, DIR_FILES) === 0) {
+      if (in_array($ext, $this->ALLOWED_IMAGES) && strpos($dir, DIR_IMAGES) === 0) {
+        //if it's an image, create thumb
+        try {
+          // if no width or height specified
+          $width = $width ? $width : null;
+          $height = $height ? $height : null;
 
-        // get path to img/fileicons folder
-        $server_url = rtrim(dirname(__FILE__), '/') . '/../../';
-        $server_url = realpath($server_url);
-        $server_url = rtrim($server_url, '/') . '/img/fileicons/';
-        $url = $this->http_root . substr($server_url, strlen(DIR_ROOT));
+          $thumb = WideImage::load($path . '/' . $filename)->resizeDown($width, $height);
 
+          if ($mode == 2) { // if generating small thumb for imageManager inner use - make it exactly 100x100 with white background
+            $thumb = $thumb->resizeCanvas($width, $height, 'center', 'center', 0x00FFFFFF);
+          }
+          $thumb-> //				roundCorners(20,0x00FFFFFF,4)->
+              saveToFile($path . $thumbFilename);
+          // clear some memory
+          unset($thumb);
 
-        // show the file-type icon
-        if (!empty($ext) && file_exists($server_url . $ext . '.png')) {
-          return $url . $ext . '.png';
-        } else {
-          return $url . 'none.png';
+          return $this->http_root . $dir . $thumbFilename;
+        } catch (WideImage_InvalidImageSourceException $e) {
+          $e->getMessage();
         }
-      } else { //if it's an image, create thumb
-
-        // if no width or height specified
-        $width = $width ? $width : null;
-        $height = $height ? $height : null;
-
-        $thumb = WideImage::load($path . '/' . $filename)->resizeDown($width, $height);
-        if ($mode == 2) { // if generating small thumb for imageManager inner use - make it exactly 100x100 with white background
-          $thumb = $thumb->resizeCanvas($width, $height, 'center', 'center', 0x00FFFFFF);
-        }
-        $thumb-> //				roundCorners(20,0x00FFFFFF,4)->
-            saveToFile($path . $thumbFilename);
-        // clear some memory
-        unset($thumb);
-
-        return $this->http_root . $dir . $thumbFilename;
       }
     }
+
+
+    // get path to img/fileicons folder
+    $server_url = rtrim(dirname(__FILE__), '/') . '/../../';
+    $server_url = realpath($server_url);
+    $server_url = rtrim($server_url, '/') . '/img/fileicons/';
+    $url = $this->http_root . substr($server_url, strlen(DIR_ROOT));
+
+
+    // show the file-type icon
+    if (!empty($ext) && file_exists($server_url . $ext . '.png')) {
+      return $url . $ext . '.png';
+    } else {
+      return $url . 'none.png';
+    }
+
+
   }
 
 
