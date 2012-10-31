@@ -415,7 +415,9 @@ class TinyImageManager {
       return false;
     }
 
-    set_time_limit(120);
+    if (!ini_get('safe_mode')) {
+      set_time_limit(120);
+    }
 
     if (!is_dir($dir . '/.thumbs')) {
       mkdir($dir . '/.thumbs');
@@ -506,9 +508,9 @@ class TinyImageManager {
       $maxWidth = MAX_WIDTH ? MAX_WIDTH : '100%';
       $maxHeight = MAX_HEIGHT ? MAX_HEIGHT : '100%';
       try {
-      WideImage::load($fileFullPath)->resizeDown($maxWidth, $maxHeight)->saveToFile($fileFullPath);
-      $fileImageInfo = getimagesize($fileFullPath);}
-      catch (WideImage_InvalidImageSourceException $e) {
+        WideImage::load($fileFullPath)->resizeDown($maxWidth, $maxHeight)->saveToFile($fileFullPath);
+        $fileImageInfo = getimagesize($fileFullPath);
+      } catch (WideImage_InvalidImageSourceException $e) {
         $e->getMessage();
       }
     }
@@ -542,7 +544,9 @@ class TinyImageManager {
     header("Pragma: no-cache");
 
     // 5 minutes execution time
-    set_time_limit(5 * 60);
+    if (!ini_get('safe_mode')) {
+      set_time_limit(5 * 60);
+    }
 
 
     // Get parameters
