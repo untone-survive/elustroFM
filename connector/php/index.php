@@ -757,7 +757,7 @@ class TinyImageManager {
       $filename = $v['name'];
 
       if (mb_strlen($filename) > 30) {
-        $filename = mb_substr($filename, 0, 25) . '...';
+        $filename = mb_substr($filename, 0, 25, 'UTF-8') . '...';
       }
 
       $ret .= '<div class="imageBlock0" filename="' . $v['filename'] . '" fname="' . $v['name'] . '" type="' . $type . '" ext="' . $v['ext'] . '" path="' . $v['path'] . '" linkto="' . $v['link'] . '" fsize="' . $v['size'] . '" fsizetext="' . $this->bytes_to_str($v['size']) . '" date="' . date('d.m.Y H:i', $v['date']) . '" fwidth="' . $v['width'] . '" fheight="' . $v['height'] . '" md5="' . $v['md5'] . '" ' . $middle_thumb_attr . '><div class="imageBlock1"  title="' . $v['name'] . '"><div class="imageImage ' . $div_params . '"><img src="' . $thumb . '" ' . $img_params . ' alt="' . $v['name'] . '" /></div><div class="imageName">' . $filename . '</div></div></div>';
