@@ -43,15 +43,13 @@ class TinyImageManager {
       $_SESSION['tiny_image_manager_page'] = 1;
     }
 
-    $this->ALLOWED_IMAGES = array( 'jpeg', 'jpg', 'gif', 'png' );
-    $this->ALLOWED_FILES = array( '3gp', 'avi', 'bmp', 'bz', 'cpp', 'css', 'doc', 'docx', 'exe', 'flac', 'flv', 'gz',
-                                  'htm', 'html', 'm4v', 'mkv', 'mov', 'mp3', 'mp4', 'mpg', 'ogg', 'pdf', 'ppt', 'pptx',
-                                  'psd', 'ptt', 'rar', 'rb', 'rtf', 'swf', 'tar', 'tiff', 'txt', 'vob', 'wav', 'wmv',
-                                  'xhtml', 'xls', 'xlsx', 'xml', 'zip'
-    );
+    $this->ALLOWED_IMAGES = array('jpeg', 'jpg', 'gif', 'png');
+    $this->ALLOWED_FILES = array('3gp', 'avi', 'bmp', 'bz', 'cpp', 'css', 'doc', 'docx', 'exe', 'flac', 'flv', 'gz',
+                                 'htm', 'html', 'm4v', 'mkv', 'mov', 'mp3', 'mp4', 'mpg', 'ogg', 'pdf', 'ppt', 'pptx',
+                                 'psd', 'ptt', 'rar', 'rb', 'rtf', 'swf', 'tar', 'tiff', 'txt', 'vob', 'wav', 'wmv',
+                                 'xhtml', 'xls', 'xlsx', 'xml', 'zip');
 
-    $this->dir = array( 'images' => realpath(DIR_ROOT . DIR_IMAGES), 'files' => realpath(DIR_ROOT . DIR_FILES)
-    );
+    $this->dir = array('images' => realpath(DIR_ROOT . DIR_IMAGES), 'files' => realpath(DIR_ROOT . DIR_FILES));
 
     $this->http_root = rtrim(HTTP_ROOT, '/');
 
@@ -118,7 +116,12 @@ class TinyImageManager {
         }
 
         // если зашли первый раз, показываем предыдущую папку
-        if (isset($_POST['default']) && isset($_SESSION['tiny_image_manager_path'], $_SESSION['tiny_image_manager_type']) && $_SESSION['tiny_image_manager_path'] !== 'undefined' && $_SESSION['tiny_image_manager_type'] !== 'undefined' && $_SESSION['tiny_image_manager_type']) {
+        if (
+          isset($_POST['default']) && isset($_SESSION['tiny_image_manager_path'], $_SESSION['tiny_image_manager_type'])
+            && $_SESSION['tiny_image_manager_path'] !== 'undefined'
+            && $_SESSION['tiny_image_manager_type'] !== 'undefined'
+            && $_SESSION['tiny_image_manager_type']
+        ) {
           $path = $_SESSION['tiny_image_manager_path'];
           $type = $_SESSION['tiny_image_manager_type'];
         } else {
@@ -128,7 +131,9 @@ class TinyImageManager {
           $_SESSION['tiny_image_manager_type'] = $type;
         }
 
-        if (isset($_POST['default']) && $_SESSION['tiny_image_manager_page'] != 1 && $_SESSION['tiny_image_manager_page'] != 'undefined') {
+        if (isset($_POST['default']) && $_SESSION['tiny_image_manager_page'] != 1
+          && $_SESSION['tiny_image_manager_page'] != 'undefined'
+        ) {
           $page = $_SESSION['tiny_image_manager_page'];
         } else {
           $page = !empty($_POST['page']) ? (int)$_POST['page'] : 1;
@@ -199,6 +204,7 @@ class TinyImageManager {
    *
    * @param string $requestDirectory Запрашиваемая папка (относительно DIR_IMAGES или DIR_FILES)
    * @param (images|files) $typeDirectory Тип папки, изображения или файлы
+   *
    * @return path|false
    */
   function AccessDir($requestDirectory, $typeDirectory) {
@@ -232,7 +238,7 @@ class TinyImageManager {
     $struct = array();
     $handle = opendir($beginFolder);
     if ($handle) {
-      $struct[$beginFolder]['path'] = str_replace(array( $this->dir['files'], $this->dir['images'] ), '', $beginFolder);
+      $struct[$beginFolder]['path'] = str_replace(array($this->dir['files'], $this->dir['images']), '', $beginFolder);
       $tmp = preg_split('[\\/]', $beginFolder);
       $tmp = array_filter($tmp);
       end($tmp);
@@ -262,8 +268,9 @@ class TinyImageManager {
    *
    * @param images|files $type
    * @param first|String $innerDirs
-   * @param String $currentDir
-   * @param int $level
+   * @param String       $currentDir
+   * @param int          $level
+   *
    * @return html
    */
   function DirStructure($type, $innerDirs = 'first', $currentDir = '', $level = 0) {
@@ -291,7 +298,10 @@ class TinyImageManager {
       }
       foreach ($innerDirs as $v) {
         #TODO: language dependent root folder name
-        $ret = '<div class="folder folder' . ucfirst($type) . ' ' . $firstAct . '" path="" pathtype="' . $type . '">' . ($type == 'images' ? 'Images' : 'Files') . ($v['count'] > 0 ? ' (' . $v['count'] . ')' : '') . '</div><div class="folderOpenSection" style="display:block;">';
+        $ret
+          = '<div class="folder folder' . ucfirst($type) . ' ' . $firstAct . '" path="" pathtype="' . $type . '">' . (
+        $type == 'images' ? 'Images' : 'Files') . ($v['count'] > 0 ? ' (' . $v['count'] . ')' : '')
+          . '</div><div class="folderOpenSection" style="display:block;">';
         if (isset($v['childs'])) {
           $ret .= $this->DirStructure($type, $v['childs'], $currentDir, $level);
         }
@@ -335,7 +345,9 @@ class TinyImageManager {
           }
         }
         $folderClass .= ' folder';
-        $ret .= '<div class="' . $folderClass . ' ' . $folderAct . '" path="' . $v['path'] . '" title="' . $files . '" pathtype="' . $type . '">' . $v['name'] . ($v['count'] > 0 ? ' (' . $v['count'] . ')' : '') . '</div><div class="folderOpenSection" ' . $folderOpen . '>';
+        $ret .= '<div class="' . $folderClass . ' ' . $folderAct . '" path="' . $v['path'] . '" title="' . $files
+          . '" pathtype="' . $type . '">' . $v['name'] . ($v['count'] > 0 ? ' (' . $v['count'] . ')' : '')
+          . '</div><div class="folderOpenSection" ' . $folderOpen . '>';
         $ret .= $this->DirStructure($type, $v['childs'], $currentDir, $level + 1);
         $ret .= '</div>';
       } else {
@@ -344,7 +356,8 @@ class TinyImageManager {
         if ($soc > 0 && $currentDirArr[$soc] == $v['name']) {
           $folderAct = 'folderAct';
         }
-        $ret .= '<div class="folder folderClosed ' . $folderAct . '" path="' . $v['path'] . '" title="' . $files . '" pathtype="' . $type . '">' . $v['name'] . ($v['count'] > 0 ? ' (' . $v['count'] . ')' : '') . '</div>';
+        $ret .= '<div class="folder folderClosed ' . $folderAct . '" path="' . $v['path'] . '" title="' . $files
+          . '" pathtype="' . $type . '">' . $v['name'] . ($v['count'] > 0 ? ' (' . $v['count'] . ')' : '') . '</div>';
       }
     }
 
@@ -355,7 +368,8 @@ class TinyImageManager {
    * Путь (хлебные крошки)
    *
    * @param images|files $type
-   * @param String $path
+   * @param String       $path
+   *
    * @return html
    */
   function DirPath($type, $path = '') {
@@ -366,7 +380,9 @@ class TinyImageManager {
     }
 
 
-    $ret = '<div class="addrItem" path="" pathtype="' . $type . '" title=""><img src="img/' . ($type == 'images' ? 'folder_open_image' : 'folder_open_document') . '.png" width="16" height="16" alt="Корневая директория" /></div>';
+    $ret = '<div class="addrItem" path="" pathtype="' . $type . '" title=""><img src="img/' . (
+    $type == 'images' ? 'folder_open_image' : 'folder_open_document')
+      . '.png" width="16" height="16" alt="Корневая директория" /></div>';
     $i = 0;
     $addPath = '';
     if (is_array($path)) {
@@ -374,9 +390,11 @@ class TinyImageManager {
         $i++;
         $addPath .= '/' . $v;
         if (sizeof($path) == $i) {
-          $ret .= '<div class="addrItemEnd" path="' . $addPath . '" pathtype="' . $type . '" title=""><div>' . $v . '</div></div>';
+          $ret .= '<div class="addrItemEnd" path="' . $addPath . '" pathtype="' . $type . '" title=""><div>' . $v
+            . '</div></div>';
         } else {
-          $ret .= '<div class="addrItem" path="' . $addPath . '" pathtype="' . $type . '" title=""><div>' . $v . '</div></div>';
+          $ret .= '<div class="addrItem" path="' . $addPath . '" pathtype="' . $type . '" title=""><div>' . $v
+            . '</div></div>';
         }
       }
     }
@@ -461,7 +479,10 @@ class TinyImageManager {
           if (!empty($newData[$file])) {
             $files[$file] = $newData[$file];
           } else {
-            $files[$file] = $this->getFileInfo($dir, $type, $file);
+            $file_info = $this->getFileInfo($dir, $type, $file);
+            if ($file_info) {
+              $files[$file] = $file_info;
+            }
           }
           $newFiles++;
         }
@@ -493,37 +514,38 @@ class TinyImageManager {
     $allowed = array_merge($this->ALLOWED_IMAGES, $this->ALLOWED_FILES);
 
     if (!in_array(strtolower($file_info['extension']), $allowed)) {
-      die('You cannot upload such files here!');
-    }
+      return false;
+    } else {
 
-    $link = str_replace(array( '/\\', '//', '\\\\', '\\'
-                        ), DS, DS . str_replace(realpath(DIR_ROOT), '', realpath($fileFullPath)));
-    $path = pathinfo($link);
-    $link = $this->http_root . $link;
+      $link = str_replace(array('/\\', '//', '\\\\', '\\'), DS,
+        DS . str_replace(realpath(DIR_ROOT), '', realpath($fileFullPath))
+      );
+      $path = pathinfo($link);
+      $link = $this->http_root . $link;
 
 
-    // проверяем размер загруженного изображения (только для загруженных в папку изображений)
-    // и уменьшаем его
-    if ($type == 'images' && in_array(strtolower($file_info['extension']), $this->ALLOWED_IMAGES)) {
-      $maxWidth = MAX_WIDTH ? MAX_WIDTH : '100%';
-      $maxHeight = MAX_HEIGHT ? MAX_HEIGHT : '100%';
-      try {
-        WideImage::load($fileFullPath)->resizeDown($maxWidth, $maxHeight)->saveToFile($fileFullPath);
-        $fileImageInfo = getimagesize($fileFullPath);
-      } catch (WideImage_InvalidImageSourceException $e) {
-        $e->getMessage();
+      // проверяем размер загруженного изображения (только для загруженных в папку изображений)
+      // и уменьшаем его
+      if ($type == 'images' && in_array(strtolower($file_info['extension']), $this->ALLOWED_IMAGES)) {
+        $maxWidth = MAX_WIDTH ? MAX_WIDTH : '100%';
+        $maxHeight = MAX_HEIGHT ? MAX_HEIGHT : '100%';
+        try {
+          WideImage::load($fileFullPath)->resizeDown($maxWidth, $maxHeight)->saveToFile($fileFullPath);
+          $fileImageInfo = getimagesize($fileFullPath);
+        } catch (WideImage_InvalidImageSourceException $e) {
+          $e->getMessage();
+        }
       }
-    }
-    $files[$file] = array( 'filename' => $file,
-                           'name' => $realname ? $realname : basename(mb_strtolower($file_info['basename']), '.' . $file_info['extension']),
-                           'ext' => $file_info['extension'], 'path' => $path['dirname'], 'link' => $link,
-                           'size' => filesize($fileFullPath), 'date' => filemtime($fileFullPath),
-                           'width' => !empty($fileImageInfo[0]) ? $fileImageInfo[0] : 'N/A',
-                           'height' => !empty($fileImageInfo[1]) ? $fileImageInfo[1] : 'N/A',
-                           'md5' => md5_file($fileFullPath)
-    );
+      $files[$file] = array('filename' => $file, 'name' => $realname ? $realname :
+        basename(mb_strtolower($file_info['basename']), '.' . $file_info['extension']),
+                            'ext' => $file_info['extension'], 'path' => $path['dirname'], 'link' => $link,
+                            'size' => filesize($fileFullPath), 'date' => filemtime($fileFullPath),
+                            'width' => !empty($fileImageInfo[0]) ? $fileImageInfo[0] : 'N/A',
+                            'height' => !empty($fileImageInfo[1]) ? $fileImageInfo[1] : 'N/A',
+                            'md5' => md5_file($fileFullPath));
 
-    return $files[$file];
+      return $files[$file];
+    }
   }
 
 
@@ -739,7 +761,9 @@ class TinyImageManager {
       ) {
         $middle_thumb = $this->GetThumb($v['path'], $v['md5'], $v['filename'], 0, WIDTH_TO_LINK, HEIGHT_TO_LINK);
         list($middle_width, $middle_height) = getimagesize($middle_thumb);
-        $middle_thumb_attr = 'fmiddle="' . $middle_thumb . '" fmiddlewidth="' . $middle_width . '" fmiddleheight="' . $middle_height . '" fclass="' . CLASS_LINK . '" frel="' . REL_LINK . '"';
+        $middle_thumb_attr
+          = 'fmiddle="' . $middle_thumb . '" fmiddlewidth="' . $middle_width . '" fmiddleheight="' . $middle_height
+          . '" fclass="' . CLASS_LINK . '" frel="' . REL_LINK . '"';
       } else {
         $middle_thumb = '';
         $middle_thumb_attr = '';
@@ -760,7 +784,13 @@ class TinyImageManager {
         $filename = mb_substr($filename, 0, 25, 'UTF-8') . '...';
       }
 
-      $ret .= '<div class="imageBlock0" filename="' . $v['filename'] . '" fname="' . $v['name'] . '" type="' . $type . '" ext="' . $v['ext'] . '" path="' . $v['path'] . '" linkto="' . $v['link'] . '" fsize="' . $v['size'] . '" fsizetext="' . $this->bytes_to_str($v['size']) . '" date="' . date('d.m.Y H:i', $v['date']) . '" fwidth="' . $v['width'] . '" fheight="' . $v['height'] . '" md5="' . $v['md5'] . '" ' . $middle_thumb_attr . '><div class="imageBlock1"  title="' . $v['name'] . '"><div class="imageImage ' . $div_params . '"><img src="' . $thumb . '" ' . $img_params . ' alt="' . $v['name'] . '" /></div><div class="imageName">' . $filename . '</div></div></div>';
+      $ret .= '<div class="imageBlock0" filename="' . $v['filename'] . '" fname="' . $v['name'] . '" type="' . $type
+        . '" ext="' . $v['ext'] . '" path="' . $v['path'] . '" linkto="' . $v['link'] . '" fsize="' . $v['size']
+        . '" fsizetext="' . $this->bytes_to_str($v['size']) . '" date="' . date('d.m.Y H:i', $v['date']) . '" fwidth="'
+        . $v['width'] . '" fheight="' . $v['height'] . '" md5="' . $v['md5'] . '" ' . $middle_thumb_attr
+        . '><div class="imageBlock1"  title="' . $v['name'] . '"><div class="imageImage ' . $div_params . '"><img src="'
+        . $thumb . '" ' . $img_params . ' alt="' . $v['name'] . '" /></div><div class="imageName">' . $filename
+        . '</div></div></div>';
     }
 
     return $ret;
@@ -775,7 +805,9 @@ class TinyImageManager {
         if ($i == $activePage) {
           $class = ' class="active"';
         }
-        $result .= '<li' . $class . '><a href="#" pathtype="' . $type . '" path="' . $path . '" data-page="' . $i . '">' . $i . '</a></li> ';
+        $result
+          .= '<li' . $class . '><a href="#" pathtype="' . $type . '" path="' . $path . '" data-page="' . $i . '">' . $i
+          . '</a></li> ';
       }
       $result .= '</ul>';
     }
@@ -803,11 +835,12 @@ class TinyImageManager {
 
           $thumb = WideImage::load($path . '/' . $filename)->resizeDown($width, $height);
 
-          if ($mode == 2) { // if generating small thumb for imageManager inner use - make it exactly 100x100 with white background
+          if ($mode == 2
+          ) { // if generating small thumb for imageManager inner use - make it exactly 100x100 with white background
             $thumb = $thumb->resizeCanvas($width, $height, 'center', 'center', 0x00FFFFFF);
           }
           $thumb-> //				roundCorners(20,0x00FFFFFF,4)->
-              saveToFile($path . $thumbFilename);
+            saveToFile($path . $thumbFilename);
           // clear some memory
           unset($thumb);
 
@@ -954,16 +987,14 @@ class TinyImageManager {
   }
 
   function translit($string) {
-    $cyr = array( "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т",
-                  "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я", "а", "б", "в", "г", "д", "е", "ё",
-                  "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ",
-                  "ъ", "ы", "ь", "э", "ю", "я"
-    );
-    $lat = array( "A", "B", "V", "G", "D", "E", "YO", "ZH", "Z", "I", "Y", "K", "L", "M", "N", "O", "P", "R", "S", "T",
-                  "U", "F", "H", "TS", "CH", "SH", "SHCH", "", "YI", "", "E", "YU", "YA", "a", "b", "v", "g", "d", "e",
-                  "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "h", "ts", "ch",
-                  "sh", "shch", "", "yi", "", "e", "yu", "ya"
-    );
+    $cyr = array("А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т",
+                 "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я", "а", "б", "в", "г", "д", "е", "ё",
+                 "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ",
+                 "ъ", "ы", "ь", "э", "ю", "я");
+    $lat = array("A", "B", "V", "G", "D", "E", "YO", "ZH", "Z", "I", "Y", "K", "L", "M", "N", "O", "P", "R", "S", "T",
+                 "U", "F", "H", "TS", "CH", "SH", "SHCH", "", "YI", "", "E", "YU", "YA", "a", "b", "v", "g", "d", "e",
+                 "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "h", "ts", "ch",
+                 "sh", "shch", "", "yi", "", "e", "yu", "ya");
     /*    for ($i = 0; $i < count($cyr); $i++) {
       $c_cyr = $cyr[$i];
       $c_lat = $lat[$i];
@@ -980,7 +1011,7 @@ class TinyImageManager {
   }
 
   function encodestring($string) {
-    $string = str_replace(array( " ", '"', "&", "<", ">" ), ' ', $string);
+    $string = str_replace(array(" ", '"', "&", "<", ">"), ' ', $string);
     $string = preg_replace("/[_\s,?!\[\](){}]+/", "_", $string);
     $string = preg_replace("/-{2,}/", "-", $string);
     $string = preg_replace("/\.{2,}/", ".", $string);
