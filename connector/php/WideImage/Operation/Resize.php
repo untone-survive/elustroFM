@@ -64,13 +64,13 @@
 			
 			if ($height !== null)
 				$height = WideImage_Coordinate::fix($height, $img->getHeight());
-			
+
 			if ($width === null)
 				$width = floor($img->getWidth() * $height / $img->getHeight());
 			
 			if ($height === null)
 				$height = floor($img->getHeight() * $width / $img->getWidth());
-			
+
 			if ($width === 0 || $height === 0)
 				return array('width' => 0, 'height' => 0);
 			
@@ -98,7 +98,12 @@
 			}
 			else
 				throw new WideImage_Operation_InvalidFitMethodException("{$fit} is not a valid resize-fit method.");
-			
+      if (!$dim['width']) {
+        $dim['width'] = 1;
+      }
+      if (!$dim['height']) {
+        $dim['height'] = 1;
+      }
 			return $dim;
 		}
 		

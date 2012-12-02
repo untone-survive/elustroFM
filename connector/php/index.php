@@ -526,7 +526,7 @@ class TinyImageManager {
 
       // проверяем размер загруженного изображения (только для загруженных в папку изображений)
       // и уменьшаем его
-      if ($type == 'images' && in_array(strtolower($file_info['extension']), $this->ALLOWED_IMAGES)) {
+      if ($type == 'images' && in_array(strtolower($file_info['extension']), $this->ALLOWED_IMAGES) && (MAX_WIDTH || MAX_HEIGHT)) {
         $maxWidth = MAX_WIDTH ? MAX_WIDTH : '100%';
         $maxHeight = MAX_HEIGHT ? MAX_HEIGHT : '100%';
         try {
@@ -847,6 +847,8 @@ class TinyImageManager {
           return $this->http_root . $dir . $thumbFilename;
         } catch (WideImage_InvalidImageSourceException $e) {
           $e->getMessage();
+        } catch (WideImage_Operation_InvalidResizeDimensionException $e) {
+
         }
       }
     }
