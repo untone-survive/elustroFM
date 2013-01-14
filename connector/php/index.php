@@ -761,9 +761,9 @@ class TinyImageManager {
       if ((WIDTH_TO_LINK > 0 && $v['width'] > WIDTH_TO_LINK) || (HEIGHT_TO_LINK > 0 && $v['height'] > HEIGHT_TO_LINK)
       ) {
         $middle_thumb = $this->GetThumb($v['path'], $v['md5'], $v['filename'], 0, WIDTH_TO_LINK, HEIGHT_TO_LINK);
-        list($middle_width, $middle_height) = getimagesize($middle_thumb);
+        list($middle_width, $middle_height) = getimagesize(realpath(DIR_ROOT) .$middle_thumb);
         $middle_thumb_attr
-          = 'fmiddle="' . $middle_thumb . '" fmiddlewidth="' . $middle_width . '" fmiddleheight="' . $middle_height
+          = 'fmiddle="' . $this->http_root .$middle_thumb . '" fmiddlewidth="' . $middle_width . '" fmiddleheight="' . $middle_height
           . '" fclass="' . CLASS_LINK . '" frel="' . REL_LINK . '"';
       } else {
         $middle_thumb = '';
@@ -789,8 +789,8 @@ class TinyImageManager {
         . '" ext="' . $v['ext'] . '" path="' . $v['path'] . '" linkto="' . $v['link'] . '" fsize="' . $v['size']
         . '" fsizetext="' . $this->bytes_to_str($v['size']) . '" date="' . date('d.m.Y H:i', $v['date']) . '" fwidth="'
         . $v['width'] . '" fheight="' . $v['height'] . '" md5="' . $v['md5'] . '" ' . $middle_thumb_attr
-        . '><div class="imageBlock1"  title="' . $v['name'] . '"><div class="imageImage ' . $div_params . '"><img src="'
-        . $thumb . '" ' . $img_params . ' alt="' . $v['name'] . '" /></div><div class="imageName">' . $filename
+        . '><div class="imageBlock1"  title="' . $v['name'] . '"><div class="imageImage ' . $div_params . '"><img src="'.
+        $this->http_root . $thumb . '" ' . $img_params . ' alt="' . $v['name'] . '" /></div><div class="imageName">' . $filename
         . '</div></div></div>';
     }
 
@@ -824,7 +824,7 @@ class TinyImageManager {
 
     // if thumb already exists
     if (is_file($path . $thumbFilename)) {
-      return $this->http_root . $dir . $thumbFilename;
+      return $dir . $thumbFilename;
     } else {
       // if not an image or we are in 'files' folder
       if (in_array($ext, $this->ALLOWED_IMAGES) && strpos($dir, DIR_IMAGES) === 0) {
@@ -845,7 +845,7 @@ class TinyImageManager {
           // clear some memory
           unset($thumb);
 
-          return $this->http_root . $dir . $thumbFilename;
+          return $dir . $thumbFilename;
         } catch (WideImage_InvalidImageSourceException $e) {
           $e->getMessage();
         } catch (WideImage_Operation_InvalidResizeDimensionException $e) {
@@ -859,7 +859,7 @@ class TinyImageManager {
     $server_url = rtrim(dirname(__FILE__), '/') . '/../../';
     $server_url = realpath($server_url);
     $server_url = rtrim($server_url, '/') . '/img/fileicons/';
-    $url = $this->http_root . substr($server_url, strlen(DIR_ROOT));
+    $url = substr($server_url, strlen(DIR_ROOT));
 
 
     // show the file-type icon
