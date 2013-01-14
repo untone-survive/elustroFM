@@ -656,6 +656,7 @@ class TinyImageManager {
       }
     }
 
+    chmod($dir.DS.$file, 0664);
     $files[$file] = $this->getFileInfo($dir, $type, $file, $fileName);
 
     $this->addFilesInfo($inputDir, $type, $files);
@@ -916,6 +917,7 @@ class TinyImageManager {
 
       fwrite($dbfilehandle, serialize($files));
       fclose($dbfilehandle);
+      @chmod($dbfile, 0664);
     }
 
     if (is_file($path . '/' . $filename)) {
