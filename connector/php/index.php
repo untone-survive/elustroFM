@@ -844,6 +844,7 @@ class TinyImageManager {
             saveToFile($path . $thumbFilename);
           // clear some memory
           unset($thumb);
+          chmod($path.$thumbFilename, 0664);
 
           return $dir . $thumbFilename;
         } catch (WideImage_InvalidImageSourceException $e) {
@@ -917,7 +918,7 @@ class TinyImageManager {
 
       fwrite($dbfilehandle, serialize($files));
       fclose($dbfilehandle);
-      @chmod($dbfile, 0664);
+      chmod($dbfile, 0664);
     }
 
     if (is_file($path . '/' . $filename)) {
